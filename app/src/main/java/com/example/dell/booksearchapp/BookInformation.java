@@ -22,6 +22,7 @@ public class BookInformation extends AppCompatActivity {
     private ImageView favorite;
     private TextView info_averageRate;
 
+    private int bookPosition;
     private String bookId;
     private String bookTitle;
     private String bookAuthor;
@@ -36,7 +37,6 @@ public class BookInformation extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_information);
 
-
         info_author = findViewById(R.id.info_bookAuthor);
         info_averageRate = findViewById(R.id.info_averageRate);
         info_bookCover = findViewById(R.id.info_bookCover);
@@ -46,6 +46,7 @@ public class BookInformation extends AppCompatActivity {
         favorite = findViewById(R.id.info_favorite);
 
 
+        bookPosition = getIntent().getExtras().getInt("PositionList"); // to remove item from favorite using it's position
         bookId = getIntent().getExtras().getString("BookId");
         bookTitle = getIntent().getExtras().getString("BookTitle");
         bookAuthor = getIntent().getExtras().getString("BookAuthor");
@@ -55,20 +56,24 @@ public class BookInformation extends AppCompatActivity {
         bookCategories = getIntent().getExtras().getString("Categories");
         averageRating = getIntent().getExtras().getDouble("AverageRating");
 
+
+        // set Book information
         info_bookTitle.setText(bookTitle);
         info_averageRate.setText(String.valueOf(averageRating));
         info_author.setText(bookAuthor);
-
         if (isFavorite == 0) {
             favorite.setBackgroundResource(R.drawable.unfavorite);
         }
         else {
             favorite.setBackgroundResource(R.drawable.favorite_tab_icon);
         }
-
         info_categories.setText(bookCategories);
         book_description.setText(bookDescription);
         Picasso.get().load(bookCoverLink).into(info_bookCover);
+
+
+        final Book book = new Book(bookId , bookTitle ,  bookAuthor ,  averageRating ,  bookCoverLink ,
+                 bookCategories ,  bookDescription ,  1); // to add it to favorite list
 
         favorite.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("ResourceType")
@@ -76,23 +81,23 @@ public class BookInformation extends AppCompatActivity {
             public void onClick(View v) {
 
                 if (isFavorite == 0) {
-
                     favorite.setBackgroundResource(R.drawable.favorite_tab_icon);
-                    add();
-                    Toast.makeText(BookInformation.this ,"this book is added to favorite" , Toast.LENGTH_SHORT).show();
+                    boolean unique = FavoriteFragment.notifyItemAdded(book);
+                    if (unique)
+                        addToDatabase();
+                    // else it already exist in favorite list you cannot add it twice
                 }
                 else {
-
                     favorite.setBackgroundResource(R.drawable.unfavorite);
-                    delete();
-                    Toast.makeText(BookInformation.this ,"this book is removed from favorite" , Toast.LENGTH_SHORT).show();
+                    deleteFromDatabase();
+                    FavoriteFragment.notifyItemRemoved(bookPosition);
+                    finish();
                 }
-              //  FavoriteFragment.notifyAdapter();
             }
         });
     }
 
-    public void add()
+    public void addToDatabase()
     {
         ContentValues values = new ContentValues();
 
@@ -110,7 +115,7 @@ public class BookInformation extends AppCompatActivity {
 
     }
 
-    public void delete()
+    public void deleteFromDatabase()
     {
         int rowAffected = getContentResolver().delete(BooksProvider.CONTENT_URI , null ,new String[]{bookId});
         if (rowAffected > 0)

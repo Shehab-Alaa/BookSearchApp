@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -25,7 +26,7 @@ public class FavoriteFragment extends android.support.v4.app.Fragment {
 
     private static ArrayList<Book> favoriteBooks;
     private  RecyclerView favoriteBooksList;
-    private Context context;
+    private static Context context;
     private static BookSearchAdapter adapter;
 
     @Override
@@ -51,7 +52,6 @@ public class FavoriteFragment extends android.support.v4.app.Fragment {
         adapter = new BookSearchAdapter(context , favoriteBooks , R.layout.book_list_item);
         favoriteBooksList.setAdapter(adapter);
 
-        Toast.makeText(context , "" + favoriteBooks.size() , Toast.LENGTH_LONG).show();
         return view;
     }
 
@@ -85,18 +85,51 @@ public class FavoriteFragment extends android.support.v4.app.Fragment {
         return result;
     }
 
+   public static void notifyItemRemoved(int position)
+   {
+       if (adapter != null) {
+           favoriteBooks.remove(position);
+           adapter.notifyItemRemoved(position);
+           adapter.notifyItemRangeChanged(position, favoriteBooks.size());
+       }
+   }
+
+   public static boolean notifyItemAdded(Book book)
+   {
+       if (favoriteBooks.contains(book)) {
+           Toast.makeText(context, "the book is already added to favorite", Toast.LENGTH_SHORT).show();
+           return false;
+       }
+       else {
+           favoriteBooks.add(book);
+           if (adapter != null) {
+               adapter.notifyDataSetChanged();
+           }
+       }
+       return true;
+   }
+
+
+   public static boolean isFavorite(Book book)
+   {
+       if (favoriteBooks.contains(book)) {
+           return true;
+       }
+       return false;
+   }
+
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser && adapter !=null)
-        {
-            adapter.notifyDataSetChanged();
+        if (isVisibleToUser) {
+            try {
+                InputMethodManager mImm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                mImm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+                mImm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+            } catch (Exception e) {
+                //
+            }
         }
     }
 
-    public static void notifyAdapter()
-    {
-        adapter.notifyDataSetChanged();
-        adapter.notifyItemRangeChanged(0 , favoriteBooks.size());
-    }
 }

@@ -9,5 +9,5 @@ import java.util.ArrayList;
  */
 
 public abstract class DataConverter {
-    public abstract ArrayList<Book> convertData(String str);
+    public abstract void convertData(String url , ArrayList<Book> books , int notifyWhichAdapter);
 }

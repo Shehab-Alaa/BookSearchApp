@@ -6,7 +6,7 @@ import android.os.Parcelable;
  * Created by dell on 1/26/2019.
  */
 
-public class Book  {
+public class Book extends DataModel {
     private String bookId;
     private String bookTitle;
     private String bookAuthor;

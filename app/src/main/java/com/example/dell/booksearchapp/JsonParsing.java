@@ -23,7 +23,7 @@ import java.util.ArrayList;
 public class JsonParsing extends DataConverter {
 
     private String url = "https://www.googleapis.com/books/v1/volumes?q=";
-    ArrayList<Book> booksResponse = new ArrayList<>();
+    private String maxBooks = "&maxResults=40";
     private Context context;
 
 
@@ -33,9 +33,9 @@ public class JsonParsing extends DataConverter {
     }
 
     @Override
-    public ArrayList<Book> convertData(String searchInput) {
+    public void convertData(String searchInput , final ArrayList<Book> books , final int notifyWhichAdapter) {
 
-        final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url + searchInput, null,
+        final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url + searchInput + maxBooks, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -70,7 +70,8 @@ public class JsonParsing extends DataConverter {
                                   for (int c = 0;c < bookCategories.length();c++)
                                   {
                                       categories += bookCategories.getString(c);
-                                      categories += "\n";
+                                      if ((c+1) != bookCategories.length())
+                                          categories += " / ";
                                   }
 
                                   JSONObject imageLinks = volumeInfo.getJSONObject("imageLinks");
@@ -91,28 +92,31 @@ public class JsonParsing extends DataConverter {
                               }
 
                               if (bookId != null && bookTitle != null && bookAuthor != null
-                                      && bookDescription != null && bookImageLink != null)
-                                {
-                                    Book book = new Book(bookId , bookTitle, bookAuthor, averageRating, bookImageLink
-                                            , categories, bookDescription, isFavorite);
-                                    booksResponse.add(book);
-                                }
+                                      && bookDescription != null && bookImageLink != null) {
+                                  Book book = new Book(bookId, bookTitle, bookAuthor, averageRating, bookImageLink
+                                          , categories, bookDescription, isFavorite);
+                                  books.add(book);
+                              }
+
                             }
+
+                            if (notifyWhichAdapter == 1)
+                            {SearchFragment.notifySearchAdapter();}
+                            else if (notifyWhichAdapter == 3)
+                            {HomeFragment.notifyCategoriesAdapters();}
 
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-//                Log.e("here iam from Request " , error.getMessage());
+             //  Log.e("here iam from Request " , error.getMessage());
             }
         });
 
         VolleySingleton.getInstance(context).addRequest(request);
 
-        return booksResponse;
     }
 }

@@ -10,27 +10,23 @@
         android:orientation="horizontal"
         android:layout_gravity="center"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="5dp"
+        android:padding="5dp"
         android:background="@drawable/frame_item">
 
         <EditText
             android:id="@+id/searchBox"
-            android:layout_width="340dp"
+            android:layout_width="400dp"
             android:layout_height="wrap_content"
             android:hint="search"
             android:drawableLeft="@drawable/search_icon_hint"
             android:background="#00000000"
+            android:paddingRight="41dp"
             android:inputType="text"
             android:imeOptions="actionSearch" />
 
-        <ImageButton
-            android:id="@+id/search_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/search_hint"
-            android:background="#00000000"/>
 
     </LinearLayout>
 

@@ -28,17 +28,12 @@ public class BookSearchAdapter extends RecyclerView.Adapter<BookSearchAdapter.my
     Context context;
     int layout_id;
 
-    public BookSearchAdapter()
-    {
-
-    }
 
     public BookSearchAdapter(Context context , ArrayList<Book> books , int layout_id)
     {
         this.books = books;
         this.context = context;
         this.layout_id = layout_id;
-
     }
 
     @NonNull
@@ -57,6 +52,8 @@ public class BookSearchAdapter extends RecyclerView.Adapter<BookSearchAdapter.my
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context , BookInformation.class);
+
+                intent.putExtra("PositionList" , position);
                 intent.putExtra("BookId" , books.get(position).getBookId());
                 intent.putExtra("BookTitle" ,  books.get(position).getBookTitle());
                 intent.putExtra("BookAuthor" ,  books.get(position).getBookAuthor());

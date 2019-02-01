@@ -105,7 +105,7 @@ public class BooksProvider extends ContentProvider {
           getContext().getContentResolver().notifyChange(_uri , null);
           return _uri;
       }
-      throw new SQLException("Failed to add this record to " + uri);
+      throw new SQLException("something went wrong " + uri);
     }
 
     @Override
