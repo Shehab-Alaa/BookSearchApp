@@ -1,8 +1,9 @@
-package com.example.dell.booksearchapp;
+package com.example.dell.booksearchapp.activities;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.net.Uri;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -10,7 +11,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.dell.booksearchapp.R;
+import com.example.dell.booksearchapp.fragments.FavoriteFragment;
+import com.example.dell.booksearchapp.models.Book;
+import com.example.dell.booksearchapp.providers.BooksProvider;
 import com.squareup.picasso.Picasso;
+
+import com.example.dell.booksearchapp.providers.BooksProvider;
 
 public class BookInformation extends AppCompatActivity {
 
@@ -21,16 +28,10 @@ public class BookInformation extends AppCompatActivity {
     private TextView book_description;
     private ImageView favorite;
     private TextView info_averageRate;
+    private CollapsingToolbarLayout collapsingToolbarLayout;
 
+    private Book book;
     private int bookPosition;
-    private String bookId;
-    private String bookTitle;
-    private String bookAuthor;
-    private String bookDescription;
-    private String bookCoverLink;
-    private int isFavorite;
-    private String bookCategories;
-    private double averageRating;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,43 +45,37 @@ public class BookInformation extends AppCompatActivity {
         info_categories = findViewById(R.id.info_bookCategories);
         book_description = findViewById(R.id.info_description);
         favorite = findViewById(R.id.info_favorite);
+        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingtoolbar_id);
+        collapsingToolbarLayout.setTitleEnabled(true);
 
-
-        bookPosition = getIntent().getExtras().getInt("PositionList"); // to remove item from favorite using it's position
-        bookId = getIntent().getExtras().getString("BookId");
-        bookTitle = getIntent().getExtras().getString("BookTitle");
-        bookAuthor = getIntent().getExtras().getString("BookAuthor");
-        bookDescription = getIntent().getExtras().getString("BookDescription");
-        bookCoverLink = getIntent().getExtras().getString("BookCover");
-        isFavorite = getIntent().getExtras().getInt("Favorite");
-        bookCategories = getIntent().getExtras().getString("Categories");
-        averageRating = getIntent().getExtras().getDouble("AverageRating");
-
+        book = (Book)getIntent().getExtras().getSerializable("currentBook");
+        bookPosition = getIntent().getExtras().getInt("PositionList");
 
         // set Book information
-        info_bookTitle.setText(bookTitle);
-        info_averageRate.setText(String.valueOf(averageRating));
-        info_author.setText(bookAuthor);
-        if (isFavorite == 0) {
+
+        collapsingToolbarLayout.setTitle(book.getBookTitle());
+        info_bookTitle.setText(book.getBookTitle());
+        info_averageRate.setText(String.valueOf(book.getAverageRating()));
+        info_author.setText(book.getBookAuthor());
+        if (book.isFavorite() == 0) {
             favorite.setBackgroundResource(R.drawable.unfavorite);
         }
         else {
             favorite.setBackgroundResource(R.drawable.favorite_tab_icon);
         }
-        info_categories.setText(bookCategories);
-        book_description.setText(bookDescription);
-        Picasso.get().load(bookCoverLink).into(info_bookCover);
+        info_categories.setText(book.getBookCategories());
+        book_description.setText(book.getBookDescription());
+        Picasso.get().load(book.getBookCoverLink()).into(info_bookCover);
 
 
-        final Book book = new Book(bookId , bookTitle ,  bookAuthor ,  averageRating ,  bookCoverLink ,
-                 bookCategories ,  bookDescription ,  1); // to add it to favorite list
 
         favorite.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("ResourceType")
             @Override
             public void onClick(View v) {
 
-                if (isFavorite == 0) {
+                if (book.isFavorite() == 0) {
+                    book.setIsFavorite(1);
                     favorite.setBackgroundResource(R.drawable.favorite_tab_icon);
                     boolean unique = FavoriteFragment.notifyItemAdded(book);
                     if (unique)
@@ -97,27 +92,27 @@ public class BookInformation extends AppCompatActivity {
         });
     }
 
-    public void addToDatabase()
+    private void addToDatabase()
     {
         ContentValues values = new ContentValues();
 
-        values.put("book_id" , bookId);
-        values.put("title" , bookTitle);
-        values.put("author" , bookAuthor);
-        values.put("description" , bookDescription);
-        values.put("image" , bookCoverLink);
-        values.put("favorite" , 1);
-        values.put("categories" , bookCategories);
-        values.put("rate" , averageRating);
+        values.put("book_id" , book.getBookId());
+        values.put("title" , book.getBookTitle());
+        values.put("author" , book.getBookAuthor());
+        values.put("description" , book.getBookDescription());
+        values.put("image" , book.getBookCoverLink());
+        values.put("favorite" , book.isFavorite());
+        values.put("categories" , book.getBookCategories());
+        values.put("rate" , book.getAverageRating());
 
         Uri uri = getContentResolver().insert(BooksProvider.CONTENT_URI , values);
         Toast.makeText(this , "the book is added to favorite" , Toast.LENGTH_SHORT).show();
 
     }
 
-    public void deleteFromDatabase()
+    private void deleteFromDatabase()
     {
-        int rowAffected = getContentResolver().delete(BooksProvider.CONTENT_URI , null ,new String[]{bookId});
+        int rowAffected = getContentResolver().delete(BooksProvider.CONTENT_URI , null ,new String[]{book.getBookId()});
         if (rowAffected > 0)
             Toast.makeText(this , "the book is removed from favorite" , Toast.LENGTH_SHORT).show();
     }

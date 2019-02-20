@@ -1,6 +1,5 @@
-package com.example.dell.booksearchapp;
+package com.example.dell.booksearchapp.fragments;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -12,10 +11,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import java.net.URL;
+import com.example.dell.booksearchapp.models.Book;
+import com.example.dell.booksearchapp.adapters.BookSearchAdapter;
+import com.example.dell.booksearchapp.R;
+
 import java.util.ArrayList;
 
 /**
@@ -55,7 +56,7 @@ public class FavoriteFragment extends android.support.v4.app.Fragment {
         return view;
     }
 
-    public ArrayList<Book> getFavoriteBooks()
+    private ArrayList<Book> getFavoriteBooks()
     {
         ArrayList<Book> result = new ArrayList<>();
         Book book;

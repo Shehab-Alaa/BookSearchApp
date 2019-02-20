@@ -1,10 +1,12 @@
-package com.example.dell.booksearchapp;
+package com.example.dell.booksearchapp.activities;
 
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+
+import com.example.dell.booksearchapp.R;
 
 public class SplashScreen extends AppCompatActivity {
 
@@ -23,7 +25,8 @@ public class SplashScreen extends AppCompatActivity {
             }
         } , 1000 );
     }
-    public void fullScreenApp()
+
+    private void fullScreenApp()
     {
         final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION

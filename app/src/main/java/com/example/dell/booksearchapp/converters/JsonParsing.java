@@ -1,14 +1,15 @@
-package com.example.dell.booksearchapp;
+package com.example.dell.booksearchapp.converters;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.dell.booksearchapp.models.Book;
+import com.example.dell.booksearchapp.patterns.Observer;
+import com.example.dell.booksearchapp.patterns.Subject;
+import com.example.dell.booksearchapp.patterns.VolleySingleton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,20 +21,19 @@ import java.util.ArrayList;
  * Created by dell on 1/26/2019.
  */
 
-public class JsonParsing extends DataConverter {
+public class JsonParsing  implements Subject {
 
     private String url = "https://www.googleapis.com/books/v1/volumes?q=";
     private String maxBooks = "&maxResults=40";
     private Context context;
-
+    private ArrayList<Observer> observers  = new ArrayList<>();
 
     public JsonParsing(Context context)
     {
         this.context = context;
     }
 
-    @Override
-    public void convertData(String searchInput , final ArrayList<Book> books , final int notifyWhichAdapter) {
+    public void convertData(String searchInput , final ArrayList<Book> books ) {
 
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url + searchInput + maxBooks, null,
                 new Response.Listener<JSONObject>() {
@@ -79,16 +79,7 @@ public class JsonParsing extends DataConverter {
                                   averageRating = volumeInfo.getDouble("averageRating");
                               }catch (Exception e)
                               {
-                                  if (bookId != null && bookTitle != null && bookAuthor != null && bookDescription != null
-                                           && bookImageLink != null) {
-                                      Log.e("iam here in parsing", e.getMessage());
-                                      Log.e("title", bookTitle);
-                                      Log.e("author", bookAuthor);
-                                      Log.e("description", bookDescription);
-                                      Log.e("image link", bookImageLink);
-                                      Log.e("rate", String.valueOf(averageRating));
-                                      Log.e("categories", categories);
-                                  }
+
                               }
 
                               if (bookId != null && bookTitle != null && bookAuthor != null
@@ -100,10 +91,7 @@ public class JsonParsing extends DataConverter {
 
                             }
 
-                            if (notifyWhichAdapter == 1)
-                            {SearchFragment.notifySearchAdapter();}
-                            else if (notifyWhichAdapter == 3)
-                            {HomeFragment.notifyCategoriesAdapters();}
+                            notifyAllObservers();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -112,11 +100,29 @@ public class JsonParsing extends DataConverter {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-             //  Log.e("here iam from Request " , error.getMessage());
+             //
             }
         });
 
         VolleySingleton.getInstance(context).addRequest(request);
 
+    }
+
+    @Override
+    public void addObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyAllObservers() {
+       for (Observer observer : observers)
+       {
+           observer.notifyAdapter();
+       }
     }
 }

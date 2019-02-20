@@ -1,6 +1,5 @@
-package com.example.dell.booksearchapp;
+package com.example.dell.booksearchapp.fragments;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,10 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ProgressBar;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
+import com.example.dell.booksearchapp.models.Book;
+import com.example.dell.booksearchapp.adapters.BookSearchAdapter;
+import com.example.dell.booksearchapp.converters.JsonParsing;
+import com.example.dell.booksearchapp.patterns.Observer;
+import com.example.dell.booksearchapp.R;
 
 import java.util.ArrayList;
 
@@ -21,22 +23,29 @@ import java.util.ArrayList;
  * Created by dell on 1/26/2019.
  */
 
-public class HomeFragment extends android.support.v4.app.Fragment{
+public class HomeFragment extends android.support.v4.app.Fragment implements Observer {
 
     private ArrayList<Book> books_popularBooks , books_fictionBooks , books_businessBooks , books_historyBooks
     , books_internationalBooks , books_sportBooks ;
-    private static RecyclerView popularBooksList , fictionBooksList , businessBooksList
+    private  RecyclerView popularBooksList , fictionBooksList , businessBooksList
             , historyBooksList , internationalBooksList , sportBooksList;
     private BookSearchAdapter popularBooksAdapter , fictionBooksAdapter , businessBooksAdapter
             , historyBooksAdapter , internationalBooksAdapter , sportBooksAdapter;
 
+    private ProgressBar categoriesLoading;
+    private JsonParsing parseData ;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.home_fragment , container , false);
 
+        parseData = new JsonParsing(getContext());
+        parseData.addObserver(HomeFragment.this);
 
+        categoriesLoading = view.findViewById(R.id.categories_loading);
+
+        categoriesLoading.setVisibility(View.VISIBLE);
 
         popularBooksList = view.findViewById(R.id.list_popularBooks);
         setCategory(books_popularBooks , popularBooksList , popularBooksAdapter , "popularbooks&printType=books");
@@ -60,33 +69,18 @@ public class HomeFragment extends android.support.v4.app.Fragment{
         return view;
     }
 
-    public void setCategory(ArrayList<Book> book , RecyclerView list, BookSearchAdapter adapter , String search)
+    private void setCategory(ArrayList<Book> book , RecyclerView list, BookSearchAdapter adapter , String search)
     {
-        JsonParsing parseData = new JsonParsing(getContext());
         // set category books
         book = new ArrayList<>();
-        parseData.convertData(search , book ,3);
+        parseData.convertData(search , book);
         LinearLayoutManager manager = new LinearLayoutManager(getActivity() , LinearLayoutManager.HORIZONTAL , false);
         list.setLayoutManager(manager);
         list.setHasFixedSize(true);
         adapter = new BookSearchAdapter(getContext() , book , R.layout.book_category_item);
         list.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
     }
 
-    public static void notifyCategoriesAdapters()
-    {
-        if (popularBooksList.getAdapter() != null && fictionBooksList.getAdapter() !=null && businessBooksList.getAdapter()!=null
-            && historyBooksList.getAdapter() !=null && internationalBooksList.getAdapter()!=null && sportBooksList.getAdapter()!=null)
-        {
-        popularBooksList.getAdapter().notifyDataSetChanged();
-        fictionBooksList.getAdapter().notifyDataSetChanged();
-        businessBooksList.getAdapter().notifyDataSetChanged();
-        historyBooksList.getAdapter().notifyDataSetChanged();
-        internationalBooksList.getAdapter().notifyDataSetChanged();
-        sportBooksList.getAdapter().notifyDataSetChanged();
-        }
-    }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -102,4 +96,18 @@ public class HomeFragment extends android.support.v4.app.Fragment{
         }
     }
 
+    @Override
+    public void notifyAdapter() {
+        categoriesLoading.setVisibility(View.GONE);
+        if (popularBooksList.getAdapter() != null && fictionBooksList.getAdapter() !=null && businessBooksList.getAdapter()!=null
+                && historyBooksList.getAdapter() !=null && internationalBooksList.getAdapter()!=null && sportBooksList.getAdapter()!=null)
+        {
+            popularBooksList.getAdapter().notifyDataSetChanged();
+            fictionBooksList.getAdapter().notifyDataSetChanged();
+            businessBooksList.getAdapter().notifyDataSetChanged();
+            historyBooksList.getAdapter().notifyDataSetChanged();
+            internationalBooksList.getAdapter().notifyDataSetChanged();
+            sportBooksList.getAdapter().notifyDataSetChanged();
+        }
+    }
 }

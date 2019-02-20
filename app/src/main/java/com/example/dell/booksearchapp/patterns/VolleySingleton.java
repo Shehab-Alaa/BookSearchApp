@@ -1,13 +1,10 @@
-package com.example.dell.booksearchapp;
+package com.example.dell.booksearchapp.patterns;
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-
-import java.net.ConnectException;
 
 /**
  * Created by dell on 1/30/2019.

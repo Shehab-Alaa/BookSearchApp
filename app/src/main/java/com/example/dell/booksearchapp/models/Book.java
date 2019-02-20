@@ -1,12 +1,12 @@
-package com.example.dell.booksearchapp;
+package com.example.dell.booksearchapp.models;
 
-import android.os.Parcelable;
+import java.io.Serializable;
 
 /**
  * Created by dell on 1/26/2019.
  */
 
-public class Book extends DataModel {
+public class Book implements Serializable{
     private String bookId;
     private String bookTitle;
     private String bookAuthor;

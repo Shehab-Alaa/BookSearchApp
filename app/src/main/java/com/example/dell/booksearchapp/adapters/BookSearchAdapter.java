@@ -1,22 +1,21 @@
-package com.example.dell.booksearchapp;
+package com.example.dell.booksearchapp.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.dell.booksearchapp.activities.BookInformation;
+import com.example.dell.booksearchapp.R;
+import com.example.dell.booksearchapp.models.Book;
 import com.squareup.picasso.Picasso;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.zip.Inflater;
 
 /**
  * Created by dell on 1/26/2019.
@@ -54,14 +53,7 @@ public class BookSearchAdapter extends RecyclerView.Adapter<BookSearchAdapter.my
                 Intent intent = new Intent(context , BookInformation.class);
 
                 intent.putExtra("PositionList" , position);
-                intent.putExtra("BookId" , books.get(position).getBookId());
-                intent.putExtra("BookTitle" ,  books.get(position).getBookTitle());
-                intent.putExtra("BookAuthor" ,  books.get(position).getBookAuthor());
-                intent.putExtra("BookDescription" ,  books.get(position).getBookDescription());
-                intent.putExtra("BookCover" ,  books.get(position).getBookCoverLink());
-                intent.putExtra("Favorite" ,  books.get(position).isFavorite());
-                intent.putExtra("AverageRating" ,  books.get(position).getAverageRating());
-                intent.putExtra("Categories" ,  books.get(position).getBookCategories());
+                intent.putExtra("currentBook" , books.get(position));
                 context.startActivity(intent);
             }
         });
@@ -78,7 +70,7 @@ public class BookSearchAdapter extends RecyclerView.Adapter<BookSearchAdapter.my
         TextView bookTitle;
         TextView bookAuthor;
         TextView bookRate;
-        LinearLayout selected_book;
+        android.support.v7.widget.CardView selected_book;
 
         public myViewHolder(View itemView) {
             super(itemView);

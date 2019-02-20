@@ -1,4 +1,4 @@
-package com.example.dell.booksearchapp;
+package com.example.dell.booksearchapp.providers;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -20,9 +20,9 @@ import android.support.annotation.Nullable;
 
 public class BooksProvider extends ContentProvider {
 
-    static final String PROVIDER_NAME = "com.example.provider.College";
-    static final String URL = "content://" + PROVIDER_NAME + "/books";
-    static final Uri CONTENT_URI = Uri.parse(URL);
+    public static final String PROVIDER_NAME = "com.example.provider.College";
+    public static final String URL = "content://" + PROVIDER_NAME + "/books";
+    public static final Uri CONTENT_URI = Uri.parse(URL);
 
     static final int BOOKS = 1;
     static final int BOOKs_ID = 2;

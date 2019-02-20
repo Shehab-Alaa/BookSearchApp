@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.dell.booksearchapp.MainActivity"
+    tools:context="com.example.dell.booksearchapp.activities.MainActivity"
     >
 
     <android.support.design.widget.AppBarLayout
@@ -22,7 +22,8 @@
             app:expandedTitleMarginEnd="64dp"
             app:expandedTitleMarginStart="48dp"
             app:layout_scrollFlags="exitUntilCollapsed|scroll"
-            app:title="BookSearchApp">
+            app:title="BookSearchApp"
+            android:paddingRight="35dp">
 
             <android.support.v7.widget.Toolbar
                 android:layout_width="match_parent"
@@ -32,7 +33,7 @@
 
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="380dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:orientation="horizontal"
@@ -54,7 +55,7 @@
                     android:orientation="horizontal">
 
                     <LinearLayout
-                        android:layout_width="200dp"
+                        android:layout_width="180dp"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
 
@@ -116,10 +117,10 @@
 
                     <ImageView
                         android:id="@+id/info_favorite"
-                        android:layout_width="40dp"
+                        android:layout_width="44dp"
                         android:layout_height="40dp"
-                        android:layout_marginLeft="7dp"
                         android:layout_marginTop="10dp"
+                        android:layout_marginLeft="7dp"
                         android:src="@drawable/unfavorite" />
 
                 </LinearLayout>
