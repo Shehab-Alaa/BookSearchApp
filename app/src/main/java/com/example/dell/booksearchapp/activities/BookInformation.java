@@ -65,8 +65,9 @@ public class BookInformation extends AppCompatActivity {
         }
         info_categories.setText(book.getBookCategories());
         book_description.setText(book.getBookDescription());
-        Picasso.get().load(book.getBookCoverLink()).into(info_bookCover);
 
+        //Picasso.get().load(book.getBookCoverLink()).into(info_bookCover);
+        MainActivity.picassoInstance.load(book.getBookCoverLink()).into(info_bookCover);
 
 
         favorite.setOnClickListener(new View.OnClickListener() {

@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,28 +21,28 @@ import com.example.dell.booksearchapp.R;
 import com.example.dell.booksearchapp.fragments.FavoriteFragment;
 import com.example.dell.booksearchapp.fragments.HomeFragment;
 import com.example.dell.booksearchapp.fragments.SearchFragment;
+import com.squareup.picasso.OkHttp3Downloader;
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
+
+import okhttp3.Cache;
+import okhttp3.OkHttpClient;
 
 public class MainActivity extends AppCompatActivity {
 
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
-    private SectionsPagerAdapter mSectionsPagerAdapter;
 
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
+
+    private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
+    public static Picasso picassoInstance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        initPicassoCaching();
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -58,6 +59,19 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void initPicassoCaching()
+    {
+        File httpCacheDirectory = new File(getCacheDir(), "picasso-cache");
+        Cache cache = new Cache(httpCacheDirectory, 20 * 1024 * 1024);
+
+        OkHttpClient.Builder okHttpClientBuilder = new OkHttpClient.Builder().cache(cache);
+
+        picassoInstance = new Picasso.Builder(this)
+                .downloader(new OkHttp3Downloader(okHttpClientBuilder.build()))
+                .indicatorsEnabled(true)
+
+                .build();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

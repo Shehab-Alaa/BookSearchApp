@@ -1,5 +1,6 @@
 package com.example.dell.booksearchapp.adapters;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -12,7 +13,9 @@ import android.widget.TextView;
 
 import com.example.dell.booksearchapp.activities.BookInformation;
 import com.example.dell.booksearchapp.R;
+import com.example.dell.booksearchapp.activities.MainActivity;
 import com.example.dell.booksearchapp.models.Book;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -85,7 +88,11 @@ public class BookSearchAdapter extends RecyclerView.Adapter<BookSearchAdapter.my
         public void onBind(Book book)
         {
             //load bookCover from internet and set it to imageView using Picasso library
-            Picasso.get().load(book.getBookCoverLink()).into(bookCover);
+            //Picasso.get().load(book.getBookCoverLink()).into(bookCover);
+            MainActivity.picassoInstance
+                    .load(book.getBookCoverLink())
+                    .networkPolicy(NetworkPolicy.OFFLINE)
+                    .into(bookCover);
 
             bookTitle.setText(book.getBookTitle());
             bookAuthor.setText(book.getBookAuthor());

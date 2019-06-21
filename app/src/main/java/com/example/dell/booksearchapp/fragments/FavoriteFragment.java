@@ -88,7 +88,7 @@ public class FavoriteFragment extends android.support.v4.app.Fragment {
 
    public static void notifyItemRemoved(int position)
    {
-       if (adapter != null) {
+       if (adapter != null && favoriteBooks.size() > position) {
            favoriteBooks.remove(position);
            adapter.notifyItemRemoved(position);
            adapter.notifyItemRangeChanged(position, favoriteBooks.size());
